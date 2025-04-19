@@ -1,0 +1,22 @@
+#!/bin/bash
+# This script is used to launch a VM in VMware Workstation Pro and check for installed kernel modules beforehand.
+#
+# Usage: launch-vm <VMX path> [<password>]
+# Example: launch-vm 'win11/Windows 11' 'password'
+
+# check for installed vmware kernel modules
+if ! vmware-modconfig --console --install-status >/dev/null 2>&1; then
+	echo "Installing VMware modules..."
+	pkexec vmware-modconfig --console --install-all
+fi
+
+if [ -z "$1" ]; then
+	echo "Error: No VM name supplied"
+	exit 1
+fi
+
+if [ -z "$2" ]; then
+	vmrun -vp "$2" start .local/share/vmware/"$1".vmx
+else
+	vmrun -vp "$2" start .local/share/vmware/"$1".vmx
+fi
