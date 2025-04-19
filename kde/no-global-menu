@@ -1,0 +1,30 @@
+#!/bin/sh
+# This script is used to disable the global menu in KDE Plasma for a specific application.
+# It unloads the appmenu module, launches the application, and then reloads the appmenu module.
+#
+# Usage: no-global-menu <application> [<args>]
+# Example: no-global-menu /opt/resolve/bin/resolve %u
+
+# Helper
+available() { command -v "${1:?}" >/dev/null; }
+
+if [ -z "$1" ]; then
+	echo "Error: No argument supplied"
+	exit 1
+fi
+
+if [ ! -x "$(command -v "$1")" ]; then
+	echo "Error: $1 is not a valid executable or an application"
+	exit 1
+fi
+
+if ! available qdbus; then
+	echo "Error: qdbus is not installed"
+	exit 1
+fi
+
+qdbus org.kde.kded6 /kded org.kde.kded6.unloadModule "appmenu" >/dev/null 2>&1
+"$@" &
+sleep 5
+qdbus org.kde.kded6 /kded org.kde.kded6.loadModule "appmenu" >/dev/null 2>&1
+exit 0
