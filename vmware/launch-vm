@@ -5,7 +5,8 @@
 # Example: launch-vm 'win11/Windows 11' 'password'
 
 # check for installed vmware kernel modules
-if ! vmware-modconfig --console --install-status >/dev/null 2>&1; then
+output=$(vmware-modconfig --console --install-status 2>&1)
+if [ ! $? ] || echo "$output" | grep -q "vmmon: unknown" || echo "$output" | grep -q "vmnet: unknown"; then
 	echo "Installing VMware modules..."
 	pkexec vmware-modconfig --console --install-all
 fi
