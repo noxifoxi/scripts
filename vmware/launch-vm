@@ -16,8 +16,9 @@ if [ -z "$1" ]; then
 	exit 1
 fi
 
+vmPath="$HOME"/.local/share/vmware/"$1".vmx
 if [ -z "$2" ]; then
-	vmrun -vp "$2" start .local/share/vmware/"$1".vmx
+	vmrun start "$vmPath"
 else
-	vmrun -vp "$2" start .local/share/vmware/"$1".vmx
+	vmrun -vp "$2" start "$vmPath"
 fi
